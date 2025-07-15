@@ -1,3 +1,4 @@
 scikit-image==0.25.2
 ome-zarr==0.11.1
+ngio==0.3.4
 fire==0.7.0

@@ -5,7 +5,7 @@ params.input_image =[
 params.sigma = "1,1,1,2.5,2.5"
 params.outdir = "./output"
 
-conda_env_spec = "conda-forge::scikit-image=0.22.0 conda-forge::ome-zarr=0.8.0 conda-forge::fire=0.5.0"
+conda_env_spec = "conda-forge::scikit-image=0.22.0 conda-forge::ome-zarr=0.8.0 conda-forge::fire=0.5.0 conda-forge::ngio=0.3.4"
 verbose = true
 
 process BLUR {

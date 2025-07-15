@@ -24,7 +24,7 @@ def extract_features(
     # Read OME-Zarr label image and specify a resolution layer.
     label_path = os.sep.join([omezarr_root, "labels", segmentation_method])
     label_reader = Reader(parse_url(label_path))
-    label = list(label_reader())[0].data[resolution]
+    label = list(label_reader())[0].data[resolution].astype("uint8")
 
     raw_reader = Reader(parse_url(omezarr_root))
     raw = list(raw_reader())[0].data[resolution]

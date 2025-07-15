@@ -2,20 +2,22 @@
 
 Simple example created by a group at the "Next generation bioimage analysis workflows hackathon".
 
-
 ## Usage
 
 1. Git pull this repository
 2. cd into the repository folder
-3. Modify the `data/input_params.yaml` file to point to the _absolute_ input image path 
+3. Modify the `data/input_params.yaml` file to point to the _absolute_ input image path
 4. Run the following command:
 If you have a conda environment with nextflow installed, you can run the following command:
+
+```console
+pixi run nextflow run . -params-file data/input_params_local.yaml -profile conda
 ```
-nextflow run . -params-file data/input_params_local.yaml -profile docker
-```
+
 or run with docker:
-```
-nextflow run . -params-file data/input_params_local.yaml -profile docker
+
+```console
+pixi run nextflow run . -params-file data/input_params_local.yaml -profile docker
 ```
 
 ## Aims
@@ -34,15 +36,16 @@ nextflow run . -params-file data/input_params_local.yaml -profile docker
 - [x] 'Hacked' nextflow IO to allow for reading/writing valid OME-Zarr files
 - [ ] Where/how to store the table?
 - [ ] A more tightly connected image visualisation tool?
-- [ ] Integration Fractal tasks into Nextflow 
-* Bonus
+- [ ] Integration Fractal tasks into Nextflow
+
+- Bonus
   - [ ] Process only a part of an image
   - [ ] Use a Fractal task as one of the Nextflow processes
- 
+
 ## Observations
 
- * Important tools and libraries require arrays of specific input dimensionality to operate on, thus we need convenient APIs and implementations that allow us to subset OME-Zarr.
-   * Very few (none?) of the current tools natively work on multi-resolution input, thus be able to specify which resolution level to work on is important and not well supported by the python libraries that we found.
+- Important tools and libraries require arrays of specific input dimensionality to operate on, thus we need convenient APIs and implementations that allow us to subset OME-Zarr.
+  - Very few (none?) of the current tools natively work on multi-resolution input, thus be able to specify which resolution level to work on is important and not well supported by the python libraries that we found.
 
 ## Analysis tools landscape in terms of input dimensionalities
 

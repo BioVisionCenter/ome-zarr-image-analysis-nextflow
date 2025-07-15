@@ -1,0 +1,13 @@
+[workspace]
+authors = ["lorenzo <lorenzo.cerrone@uzh.ch>"]
+channels = ["conda-forge", "bioconda"]
+name = "ome-zarr-image-analysis-nextflow"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+mamba = { version = ">=0.25.0", channel = "conda-forge" }
+conda = { version = ">=23.11.0", channel = "conda-forge" }
+nextflow = { version = ">=25.4.6,<26", channel = "bioconda" }

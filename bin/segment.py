@@ -9,6 +9,7 @@ import numpy as np
 from typing import Optional
 import fire
 import os
+from ngio import open_ome_zarr_container
 
 
 def segment(
@@ -19,31 +20,30 @@ def segment(
     ):
     ### Apply otsu threshold to OME-Zarr and write output to a separate OME-Zarr directory.
     # Read OME-Zarr and specify a resolution layer.
-    r = reader.Reader(parse_url(omezarr_root, mode="r"))
-    inputs = list(r())
-    data = inputs[0].data
-    multimeta = inputs[0].metadata
-    layer = data[int(resolution)]
-    # Get the numpy array and perform threshold
-    axes = multimeta['axes']
-    axorder = ''.join([item['name'] for item in axes])
-    ch_idx = axorder.index('c')
-    # Get the numpy array and perform threshold
-    array = np.array(layer)
-    slicer = [slice(None, None, None) for _ in range(array.ndim)]
-    slicer[ch_idx] = slice(channel, channel + 1, None)
-    sliced = array[tuple(slicer)]
-    t = filters.threshold_otsu(sliced)
-    mask = morphology.label(sliced > t)
-    # resize the top resolution layer to get the lower layers of the pyramid
-    shape = np.array(mask.shape)
-    nres = len(data)
-    new_shapes = [np.where(shape > 1, shape // 2 ** n, shape) for n in range(nres)]
-    layers = [transform.resize(mask, tuple(shape), preserve_range = True).astype(np.uint8) for shape in new_shapes]
-    # Save the output
-    # Write labels to the labels subdirectory of the input OME-Zarr hierarchy
-    gr = zarr.open_group(omezarr_root, mode='a')
-    _ = writer.write_multiscale_labels(pyramid = layers, group = gr, name = segmentation_name, storage_options={'dimension_separator': '/'})
+    ome_zarr = open_ome_zarr_container(omezarr_root)
+    
+    image = ome_zarr.get_image(path=str(resolution))
+    
+    # Get the a specific channel from the image.
+    array = image.get_array(c=channel)
+    
+    # This won't be necessary in ngio>0.4 
+    channel_axis = image.dimensions.get("c")
+    array = np.squeeze(array, axis=channel_axis)
+    
+    # Apply Otsu's thresholding method to the image array.
+    t = filters.threshold_otsu(array)
+    mask = morphology.label(array > t).astype(np.uint8)
+    
+    # Create a new empty OME-Zarr label.
+    label = ome_zarr.derive_label(name=segmentation_name, dtype="uint8")
+    
+    # Write the mask to the label.
+    label.set_array(mask)
+    
+    # Propagate the changes to all resolutions.
+    label.consolidate()
+    
 
 def version():
     print("0.0.1")
